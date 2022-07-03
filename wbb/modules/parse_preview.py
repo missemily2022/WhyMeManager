@@ -41,7 +41,7 @@ async def parse(_, message: Message):
     body = {
         "Title": [wpp.title or "Null"],
         "Description": [
-            (wpp.description[:50] + "...") if wpp.description else "Null"
+            f"{wpp.description[:50]}..." if wpp.description else "Null"
         ],
         "URL": [wpp.display_url or "Null"],
         "Author": [wpp.author or "Null"],
@@ -49,22 +49,23 @@ async def parse(_, message: Message):
         "Type": wpp.type or "Null",
     }
 
+
     text = section("Preview", body)
 
     t = wpp.type
 
-    if t == "photo":
-        media = wpp.photo
-        func = app2.send_photo
-    elif t == "audio":
+    if t == "audio":
         media = wpp.audio
         func = app2.send_audio
-    elif t == "video":
-        media = wpp.video
-        func = app2.send_video
     elif t == "document":
         media = wpp.document
         func = app2.send_document
+    elif t == "photo":
+        media = wpp.photo
+        func = app2.send_photo
+    elif t == "video":
+        media = wpp.video
+        func = app2.send_video
     else:
         media = None
         func = None

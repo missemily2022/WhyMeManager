@@ -96,14 +96,17 @@ ASQ_LOCK = Lock()
 
 @app.on_message(filters.command("asq") & ~filters.edited)
 async def asq(_, message):
-    err = "Reply to text message or pass the question as argument"
-    if message.reply_to_message:
-        if not message.reply_to_message.text:
-            return await message.reply(err)
+    if (
+        message.reply_to_message
+        and not message.reply_to_message.text
+        or not message.reply_to_message
+        and len(message.command) < 2
+    ):
+        err = "Reply to text message or pass the question as argument"
+        return await message.reply(err)
+    elif message.reply_to_message:
         question = message.reply_to_message.text
     else:
-        if len(message.command) < 2:
-            return await message.reply(err)
         question = message.text.split(None, 1)[1]
     m = await message.reply("Thinking...")
     async with ASQ_LOCK:
@@ -183,9 +186,7 @@ async def random(_, message):
     try:
         if 1 < int(length) < 1000:
             alphabet = string.ascii_letters + string.digits
-            password = "".join(
-                secrets.choice(alphabet) for i in range(int(length))
-            )
+            password = "".join(secrets.choice(alphabet) for _ in range(int(length)))
             await message.reply_text(f"`{password}`")
         else:
             await message.reply_text("Specify A Length Between 1-1000")

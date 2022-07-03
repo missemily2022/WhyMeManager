@@ -40,30 +40,27 @@ class EqInlineKeyboardButton(InlineKeyboardButton):
 
 
 def paginate_modules(page_n, module_dict, prefix, chat=None):
-    if not chat:
-        modules = sorted(
+    modules = (
+        sorted(
             [
                 EqInlineKeyboardButton(
                     x.__MODULE__,
-                    callback_data="{}_module({})".format(
-                        prefix, x.__MODULE__.replace(" ", "_").lower()
-                    ),
+                    callback_data=f'{prefix}_module({chat},{x.__MODULE__.replace(" ", "_").lower()})',
                 )
                 for x in module_dict.values()
             ]
         )
-    else:
-        modules = sorted(
+        if chat
+        else sorted(
             [
                 EqInlineKeyboardButton(
                     x.__MODULE__,
-                    callback_data="{}_module({},{})".format(
-                        prefix, chat, x.__MODULE__.replace(" ", "_").lower()
-                    ),
+                    callback_data=f'{prefix}_module({x.__MODULE__.replace(" ", "_").lower()})',
                 )
                 for x in module_dict.values()
             ]
         )
+    )
 
     pairs = list(zip(modules[::3], modules[1::3], modules[2::3]))
     i = 0
@@ -92,19 +89,17 @@ def paginate_modules(page_n, module_dict, prefix, chat=None):
         ] + [
             (
                 EqInlineKeyboardButton(
-                    "❮",
-                    callback_data="{}_prev({})".format(prefix, modulo_page),
+                    "❮", callback_data=f"{prefix}_prev({modulo_page})"
                 ),
                 EqInlineKeyboardButton(
-                    "Back",
-                    callback_data="{}_home({})".format(prefix, modulo_page),
+                    "Back", callback_data=f"{prefix}_home({modulo_page})"
                 ),
                 EqInlineKeyboardButton(
-                    "❯",
-                    callback_data="{}_next({})".format(prefix, modulo_page),
+                    "❯", callback_data=f"{prefix}_next({modulo_page})"
                 ),
             )
         ]
+
 
     return pairs
 

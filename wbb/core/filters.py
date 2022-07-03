@@ -46,9 +46,7 @@ async def admin(_, __, message: Message) -> bool:
     if message.chat.type not in ["group", "supergroup"]:
         return False
     if not message.from_user:
-        if not message.sender_chat:
-            return False
-        return True
+        return bool(message.sender_chat)
     # Calling iter_chat_members again and again
     # doesn't cause floodwait, that's why i'm using it here.
     return message.from_user.id in [
@@ -68,15 +66,11 @@ def anonymous(_, __, message: Message) -> bool:
 
 
 def sudoers(_, __, message: Message) -> bool:
-    if not message.from_user:
-        return False
-    return message.from_user.id in SUDOERS
+    return message.from_user.id in SUDOERS if message.from_user else False
 
 
 def owner(_, __, message: Message) -> bool:
-    if not message.from_user:
-        return False
-    return message.from_user.id == OWNER_ID
+    return message.from_user.id == OWNER_ID if message.from_user else False
 
 
 class Filters:

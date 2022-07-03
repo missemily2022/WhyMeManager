@@ -165,9 +165,7 @@ async def kang(client, message: Message):
             temp_file_path = await app.download_media(doc)
             image_type = imghdr.what(temp_file_path)
             if image_type not in SUPPORTED_TYPES:
-                return await msg.edit(
-                    "Format not supported! ({})".format(image_type)
-                )
+                return await msg.edit(f"Format not supported! ({image_type})")
             try:
                 temp_file_path = await resize_file_to_sticker_size(
                     temp_file_path
@@ -197,7 +195,7 @@ async def kang(client, message: Message):
     # Find an available pack & add the sticker to the pack; create a new pack if needed
     # Would be a good idea to cache the number instead of searching it every single time...
     packnum = 0
-    packname = "f" + str(message.from_user.id) + "_by_" + BOT_USERNAME
+    packname = f"f{str(message.from_user.id)}_by_{BOT_USERNAME}"
     limit = 0
     try:
         while True:
@@ -235,10 +233,9 @@ async def kang(client, message: Message):
             break
 
         await msg.edit(
-            "Sticker Kanged To [Pack](t.me/addstickers/{})\nEmoji: {}".format(
-                packname, sticker_emoji
-            )
+            f"Sticker Kanged To [Pack](t.me/addstickers/{packname})\nEmoji: {sticker_emoji}"
         )
+
     except (PeerIdInvalid, UserIsBlocked):
         keyboard = InlineKeyboardMarkup(
             [[InlineKeyboardButton(text="Start", url=f"t.me/{BOT_USERNAME}")]]

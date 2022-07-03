@@ -43,8 +43,5 @@ async def crypto(_, message):
 
     body = {i.upper(): j for i, j in r.get(currency).items()}
 
-    text = section(
-        "Current Crypto Rates For " + currency.upper(),
-        body,
-    )
+    text = section(f"Current Crypto Rates For {currency.upper()}", body)
     await m.edit(text, reply_markup=btn)
