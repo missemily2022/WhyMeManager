@@ -90,7 +90,7 @@ async def save_notee(_, message):
 @capture_err
 async def get_notes(_, message):
     prefix = message.text.split()[0][0]
-    is_ubot = bool(prefix == USERBOT_PREFIX)
+    is_ubot = prefix == USERBOT_PREFIX
     chat_id = USERBOT_ID if is_ubot else message.chat.id
 
     _notes = await get_note_names(chat_id)
@@ -143,8 +143,7 @@ async def get_one_note(_, message):
         data = _note["data"]
         keyb = None
         if findall(r"\[.+\,.+\]", data):
-            keyboard = extract_text_and_keyb(ikb, data)
-            if keyboard:
+            if keyboard := extract_text_and_keyb(ikb, data):
                 data, keyb = keyboard
         await message.reply_text(
             data,
@@ -168,7 +167,7 @@ async def del_note(_, message):
         return await eor(message, text="**Usage**\n__/delete [NOTE_NAME]__")
 
     prefix = message.text.split()[0][0]
-    is_ubot = bool(prefix == USERBOT_PREFIX)
+    is_ubot = prefix == USERBOT_PREFIX
     chat_id = USERBOT_ID if is_ubot else message.chat.id
 
     deleted = await delete_note(chat_id, name)

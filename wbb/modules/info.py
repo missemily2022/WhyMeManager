@@ -55,12 +55,13 @@ async def get_user_info(user, already=False):
         "ID": user_id,
         "DC": dc_id,
         "Name": [first_name],
-        "Username": [("@" + username) if username else "Null"],
+        "Username": [f"@{username}" if username else "Null"],
         "Mention": [mention],
         "Sudo": is_sudo,
         "Karma": karma,
         "Gbanned": is_gbanned,
     }
+
     caption = section("User info", body)
     return [caption, photo_id]
 
@@ -84,13 +85,14 @@ async def get_chat_info(chat, already=False):
         "DC": dc_id,
         "Type": type_,
         "Name": [title],
-        "Username": [("@" + username) if username else "Null"],
+        "Username": [f"@{username}" if username else "Null"],
         "Mention": [link],
         "Members": members,
         "Scam": is_scam,
         "Restricted": is_restricted,
         "Description": [description],
     }
+
     caption = section("Chat info", body)
     return [caption, photo_id]
 
@@ -99,9 +101,9 @@ async def get_chat_info(chat, already=False):
 async def info_func(_, message: Message):
     if message.reply_to_message:
         user = message.reply_to_message.from_user.id
-    elif not message.reply_to_message and len(message.command) == 1:
+    elif len(message.command) == 1:
         user = message.from_user.id
-    elif not message.reply_to_message and len(message.command) != 1:
+    else:
         user = message.text.split(None, 1)[1]
 
     m = await message.reply_text("Processing")

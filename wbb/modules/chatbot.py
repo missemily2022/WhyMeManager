@@ -130,7 +130,7 @@ async def chatbot_status_ubot(_, message: Message):
 async def chatbot_talk_ubot(_, message: Message):
     if message.chat.id not in active_chats_ubot:
         return
-    username = "@" + str(USERBOT_USERNAME)
+    username = f"@{str(USERBOT_USERNAME)}"
     if message.reply_to_message:
         if not message.reply_to_message.from_user:
             return
@@ -139,9 +139,8 @@ async def chatbot_talk_ubot(_, message: Message):
             and username not in message.text
         ):
             return
-    else:
-        if username not in message.text:
-            return
+    elif username not in message.text:
+        return
     await type_and_send(message)
 
 

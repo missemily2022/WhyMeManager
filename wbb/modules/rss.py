@@ -50,8 +50,7 @@ async def rss_worker():
                 )
                 await update_rss_feed(chat, feed.title)
             except Exception as e:
-                print(str(e), f"RSS {chat}")
-                pass
+                print(e, f"RSS {chat}")
         await sleep(RSS_DELAY)
 
 

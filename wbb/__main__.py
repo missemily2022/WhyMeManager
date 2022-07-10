@@ -46,7 +46,7 @@ async def start_bot():
     global HELPABLE
 
     for module in ALL_MODULES:
-        imported_module = importlib.import_module("wbb.modules." + module)
+        imported_module = importlib.import_module(f"wbb.modules.{module}")
         if (
             hasattr(imported_module, "__MODULE__")
             and imported_module.__MODULE__
@@ -197,33 +197,7 @@ async def start(_, message):
 
 @app.on_message(filters.command("help"))
 async def help_command(_, message):
-    if message.chat.type != "private":
-        if len(message.command) >= 2:
-            name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
-            if str(name) in HELPABLE:
-                key = InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(
-                                text="Click here",
-                                url=f"t.me/{BOT_USERNAME}?start=help_{name}",
-                            )
-                        ],
-                    ]
-                )
-                await message.reply(
-                    f"Click on the below button to get help about {name}",
-                    reply_markup=key,
-                )
-            else:
-                await message.reply(
-                    "PM Me For More Details.", reply_markup=keyboard
-                )
-        else:
-            await message.reply(
-                "Pm Me For More Details.", reply_markup=keyboard
-            )
-    else:
+    if message.chat.type == "private":
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
             if str(name) in HELPABLE:
@@ -248,6 +222,31 @@ async def help_command(_, message):
             await message.reply(
                 text, reply_markup=help_keyboard, disable_web_page_preview=True
             )
+    elif len(message.command) >= 2:
+        name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
+        if str(name) in HELPABLE:
+            key = InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Click here",
+                            url=f"t.me/{BOT_USERNAME}?start=help_{name}",
+                        )
+                    ],
+                ]
+            )
+            await message.reply(
+                f"Click on the below button to get help about {name}",
+                reply_markup=key,
+            )
+        else:
+            await message.reply(
+                "PM Me For More Details.", reply_markup=keyboard
+            )
+    else:
+        await message.reply(
+            "Pm Me For More Details.", reply_markup=keyboard
+        )
     return
 
 
@@ -304,13 +303,12 @@ General command are:
  - /help: Give this message
  """
     if mod_match:
-        module = (mod_match.group(1)).replace(" ", "_")
+        module = mod_match[1].replace(" ", "_")
         text = (
-            "{} **{}**:\n".format(
-                "Here is the help for", HELPABLE[module].__MODULE__
-            )
+            f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n"
             + HELPABLE[module].__HELP__
         )
+
 
         await query.message.edit(
             text=text,
@@ -327,7 +325,7 @@ General command are:
         )
         await query.message.delete()
     elif prev_match:
-        curr_page = int(prev_match.group(1))
+        curr_page = int(prev_match[1])
         await query.message.edit(
             text=top_text,
             reply_markup=InlineKeyboardMarkup(
@@ -337,7 +335,7 @@ General command are:
         )
 
     elif next_match:
-        next_page = int(next_match.group(1))
+        next_page = int(next_match[1])
         await query.message.edit(
             text=top_text,
             reply_markup=InlineKeyboardMarkup(

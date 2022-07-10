@@ -65,11 +65,7 @@ async def convert(
 
     if len(main_message.command) >= 2:
         names = main_message.text.split(None, 1)[1]
-        if not names.endswith('.pdf'):
-            pdf.name = names + '.pdf'
-        else:
-            pdf.name = names
-
+        pdf.name = names if names.endswith('.pdf') else f'{names}.pdf'
     elapsed = round(time() - start_time, 2)
 
     await main_message.reply_document(

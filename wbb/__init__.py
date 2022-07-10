@@ -63,7 +63,7 @@ async def load_sudoers():
     print("[INFO]: LOADING SUDOERS")
     sudoersdb = db.sudoers
     sudoers = await sudoersdb.find_one({"sudo": "sudo"})
-    sudoers = [] if not sudoers else sudoers["sudoers"]
+    sudoers = sudoers["sudoers"] if sudoers else []
     for user_id in SUDOERS:
         if user_id not in sudoers:
             sudoers.append(user_id)
@@ -79,15 +79,16 @@ async def load_sudoers():
 loop = asyncio.get_event_loop()
 loop.run_until_complete(load_sudoers())
 
-if not HEROKU:
-    app2 = Client(
+app2 = (
+    Client(SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
+    if HEROKU
+    else Client(
         "userbot",
         phone_number=PHONE_NUMBER,
         api_id=API_ID,
         api_hash=API_HASH,
     )
-else:
-    app2 = Client(SESSION_STRING, api_id=API_ID, api_hash=API_HASH)
+)
 
 aiohttpsession = ClientSession()
 
